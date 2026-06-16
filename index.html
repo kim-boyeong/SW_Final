@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cafe Kiosk</title>
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+  <div class="app">
+    <main class="main">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">CK</div>
+          <div>
+            <h1>Cafe Kiosk</h1>
+            <p class="subtitle">메뉴 선택부터 장바구니, 가상 결제, 영수증까지 한 화면에서 체험하는 정적 키오스크</p>
+          </div>
+        </div>
+        <div class="order-badge">
+          <span>다음 주문번호</span>
+          <strong id="nextOrder">1001</strong>
+        </div>
+      </header>
+
+      <section class="hero" aria-label="프로젝트 개요">
+        <div class="hero-panel hero-copy">
+          <h2>음료와 디저트를 고르고, 실제 키오스크처럼 주문을 완료하세요.</h2>
+          <p>PDF의 요구사항을 바탕으로 카테고리 선택, 옵션 선택, 수량 변경, 장바구니 관리, 결제 수단 선택, 영수증 출력 여부까지 모두 브라우저 안에서 동작하도록 구성했습니다.</p>
+        </div>
+        <aside class="hero-panel requirements">
+          <h3>주문 시나리오</h3>
+          <div class="flow-list">
+            <span>카테고리와 메뉴 선택</span>
+            <span>사이즈, 온도, 수량 지정</span>
+            <span>장바구니 확인 및 수정</span>
+            <span>결제 방식 선택</span>
+            <span>주문번호와 영수증 발급</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="kiosk-grid" aria-label="메뉴 주문">
+        <nav class="category-rail" aria-label="메뉴 카테고리">
+          <button class="category-btn active" data-category="coffee">커피<small>3종</small></button>
+          <button class="category-btn" data-category="noncoffee">논커피<small>3종</small></button>
+          <button class="category-btn" data-category="dessert">디저트<small>3종</small></button>
+        </nav>
+        <div class="menu-section">
+          <div class="section-title">
+            <div>
+              <h2 id="categoryTitle">커피</h2>
+              <p id="categoryDescription">사이즈와 온도를 선택할 수 있습니다.</p>
+            </div>
+            <p>Small 기본가 · Medium +500원 · Large +1,000원</p>
+          </div>
+          <div class="menu-list" id="menuList"></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="cart" aria-label="장바구니">
+      <div class="cart-head">
+        <h2>장바구니</h2>
+        <p>수량 변경, 삭제, 전체 비우기를 지원합니다.</p>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-foot">
+        <div class="total">
+          <span>총 결제 금액</span>
+          <span id="totalPrice">0원</span>
+        </div>
+        <div class="cart-actions">
+          <button class="danger-action" id="clearCart">전체 비우기</button>
+          <button class="secondary-action" id="demoFill">예시 담기</button>
+          <button class="primary-action" id="checkout">결제하기</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <dialog id="optionDialog">
+    <form method="dialog" class="modal" id="optionForm">
+      <div class="modal-head">
+        <div>
+          <h2 id="optionTitle">메뉴 선택</h2>
+          <p class="subtitle" id="optionPrice">0원</p>
+        </div>
+        <button class="close-btn" value="cancel" aria-label="닫기">X</button>
+      </div>
+      <div class="option-grid">
+        <div class="option-group" id="sizeGroup">
+          <label>사이즈</label>
+          <div class="segmented">
+            <button type="button" class="option-btn active" data-size="Small">Small</button>
+            <button type="button" class="option-btn" data-size="Medium">Medium +500</button>
+            <button type="button" class="option-btn" data-size="Large">Large +1,000</button>
+          </div>
+        </div>
+        <div class="option-group" id="temperatureGroup">
+          <label>온도</label>
+          <div class="segmented two">
+            <button type="button" class="option-btn active" data-temperature="HOT">HOT</button>
+            <button type="button" class="option-btn" data-temperature="ICE">ICE</button>
+          </div>
+        </div>
+        <div class="option-group">
+          <label for="quantity">수량</label>
+          <div class="quantity-row">
+            <button type="button" id="qtyDown">-</button>
+            <input id="quantity" type="number" min="1" value="1" inputmode="numeric">
+            <button type="button" id="qtyUp">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-total">
+        <span>소계</span>
+        <span id="optionSubtotal">0원</span>
+      </div>
+      <button class="primary-action" id="addToCart" value="default">장바구니에 담기</button>
+    </form>
+  </dialog>
+
+  <dialog id="paymentDialog">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2>결제 확인</h2>
+          <p class="subtitle">주문 내역과 결제 수단을 확인하세요.</p>
+        </div>
+        <button class="close-btn" id="closePayment" aria-label="닫기">X</button>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="modal-total">
+        <span>총 결제 금액</span>
+        <span id="paymentTotal">0원</span>
+      </div>
+      <div class="payment-list" id="paymentList" aria-label="결제 수단">
+        <button class="payment-option active" data-payment="카드 결제"><span>카드 결제</span><span>확인 후 완료</span></button>
+        <button class="payment-option" data-payment="카카오페이"><span>카카오페이</span><span>QR 결제</span></button>
+        <button class="payment-option" data-payment="네이버페이"><span>네이버페이</span><span>QR 결제</span></button>
+      </div>
+      <div class="qr-box" id="qrBox">QR 결제 안내</div>
+      <button class="primary-action" id="completePayment">결제 완료</button>
+    </div>
+  </dialog>
+
+  <dialog id="receiptDialog">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2>주문 완료</h2>
+          <p class="subtitle" id="receiptSummary">주문번호가 발급되었습니다.</p>
+        </div>
+        <button class="close-btn" id="closeReceipt" aria-label="닫기">X</button>
+      </div>
+      <div class="option-group">
+        <label>영수증 출력 여부</label>
+        <div class="segmented two">
+          <button type="button" class="option-btn active" id="showReceipt">예</button>
+          <button type="button" class="option-btn" id="hideReceipt">아니오</button>
+        </div>
+      </div>
+      <div id="receiptBody">
+        <div class="receipt-list" id="receiptList"></div>
+        <div class="modal-total">
+          <span>총 결제 금액</span>
+          <span id="receiptTotal">0원</span>
+        </div>
+      </div>
+      <button class="primary-action" id="newOrder">새 주문 시작</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
