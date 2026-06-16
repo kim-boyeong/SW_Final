@@ -129,7 +129,7 @@ SW/
 
 ## 데모
 
-이 링크(https://kim-boyeong.github.io/SW_Final/)를 통해 데모 사이트로 이동할 수 있습니다.
+이 링크(https://kim-boyeong.github.io/SW_Final/) 를 통해 데모 사이트로 이동할 수 있습니다.
 
 별도 배포 주소가 없는 경우, 로컬에서 `index.html`을 직접 열어 실행할 수 있습니다.
 
